@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const client = axios.create({
-  baseURL: "http://localhost:8000/api",
+  baseURL: "https://review-sphere-backend.onrender.com/api/movie/top-rated",
 });
 
 export default client;
