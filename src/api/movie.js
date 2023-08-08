@@ -23,6 +23,13 @@ export const uploadTrailer = async (formData, onUploadProgress) => {
 export const uploadMovie = async (formData) => {
   const token = getToken();
   try {
+
+    /* 
+    response : {
+      data,statuscode,message
+    }
+    */
+
     const { data } = await client.post("/movie/create", formData, {
       headers: {
         authorization: "Bearer " + token,

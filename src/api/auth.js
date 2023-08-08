@@ -53,6 +53,7 @@ export const getIsAuth = async (token) => {
   }
 };
 
+
 export const forgetPassword = async (email) => {
   try {
     const { data } = await client.post("/user/forget-password", { email });
