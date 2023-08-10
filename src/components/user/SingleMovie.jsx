@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { getSingleMovie } from "../../api/movie";
 import { useAuth, useNotification } from "../../hooks";
 import { convertReviewCount } from "../../utils/helper";
@@ -15,6 +15,7 @@ const convertDate = (date = "") => {
 };
 
 export default function SingleMovie() {
+  const location = useLocation();
   const [ready, setReady] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [movie, setMovie] = useState({});
@@ -37,8 +38,13 @@ export default function SingleMovie() {
   };
 
   const handleOnRateMovie = () => {
-    if (!isLoggedIn) return navigate("/auth/signin");
-    setShowRatingModal(true);
+    if (!isLoggedIn) {
+      const currentUrl = location.pathname + location.search;
+      // alert(currentUrl);
+      navigate("/auth/signin", { state: { from: currentUrl } });
+    } else {
+      setShowRatingModal(true);
+    }
   };
 
   const hideRatingModal = () => {
@@ -95,70 +101,82 @@ export default function SingleMovie() {
           <h1 className="xl:text-4xl lg:text-3xl text-2xl  text-highlight dark:text-highlight-dark font-semibold py-3">
             {title}
           </h1>
-          <div className="flex flex-col items-end">
-            <RatingStar rating={reviews.ratingAvg} />
-            <CustomButtonLink
-              label={convertReviewCount(reviews.reviewCount) + " Reviews"}
-              onClick={() => navigate("/movie/reviews/" + id)}
-            />
-            <CustomButtonLink
-              label="Rate the movie"
-              onClick={handleOnRateMovie}
-            />
-          </div>
         </div>
 
         <div className="space-y-3">
           <p className="text-light-subtle dark:text-dark-subtle">{storyLine}</p>
-          <ListWithLabel label="Director:">
-            <CustomButtonLink
-              onClick={() => handleProfileClick(director)}
-              label={director.name}
-            />
-          </ListWithLabel>
 
-          <ListWithLabel label="Writers:">
-            {writers.map((w) => (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row-reverse",
+              justifyContent: "space-between",
+            }}
+          >
+            <div className="flex flex-col items-end">
+              <RatingStar rating={reviews.ratingAvg} />
               <CustomButtonLink
-                onClick={() => handleProfileClick(w)}
-                key={w.id}
-                label={w.name}
+                label={convertReviewCount(reviews.reviewCount) + " Reviews"}
+                onClick={() => navigate("/movie/reviews/" + id)}
               />
-            ))}
-          </ListWithLabel>
+              <CustomButtonLink
+                label="Rate the movie"
+                onClick={handleOnRateMovie}
+              />
+            </div>
 
-          <ListWithLabel label="Cast:">
-            {cast.map(({ id, profile, leadActor }) => {
-              return leadActor ? (
+            <div>
+              <ListWithLabel label="Director:">
                 <CustomButtonLink
-                  onClick={() => handleProfileClick(profile)}
-                  label={profile.name}
-                  key={id}
+                  onClick={() => handleProfileClick(director)}
+                  label={director.name}
                 />
-              ) : null;
-            })}
-          </ListWithLabel>
+              </ListWithLabel>
 
-          <ListWithLabel label="Language:">
-            <CustomButtonLink label={language} clickable={false} />
-          </ListWithLabel>
+              <ListWithLabel label="Writers:">
+                {writers.map((w) => (
+                  <CustomButtonLink
+                    onClick={() => handleProfileClick(w)}
+                    key={w.id}
+                    label={w.name}
+                  />
+                ))}
+              </ListWithLabel>
 
-          <ListWithLabel label="Release Date:">
-            <CustomButtonLink
-              label={convertDate(releseDate)}
-              clickable={false}
-            />
-          </ListWithLabel>
+              <ListWithLabel label="Cast:">
+                {cast.map(({ id, profile, leadActor }) => {
+                  return leadActor ? (
+                    <CustomButtonLink
+                      onClick={() => handleProfileClick(profile)}
+                      label={profile.name}
+                      key={id}
+                    />
+                  ) : null;
+                })}
+              </ListWithLabel>
 
-          <ListWithLabel label="Cast:">
-            {genres.map((g) => (
-              <CustomButtonLink label={g} key={g} clickable={false} />
-            ))}
-          </ListWithLabel>
+              <ListWithLabel label="Language:">
+                <CustomButtonLink label={language} clickable={false} />
+              </ListWithLabel>
 
-          <ListWithLabel label="Type:">
-            <CustomButtonLink label={type} clickable={false} />
-          </ListWithLabel>
+              <ListWithLabel label="Release Date:">
+                <CustomButtonLink
+                  label={convertDate(releseDate)}
+                  clickable={false}
+                />
+              </ListWithLabel>
+
+              <ListWithLabel label="Cast:">
+                {genres.map((g) => (
+                  <CustomButtonLink label={g} key={g} clickable={false} />
+                ))}
+              </ListWithLabel>
+
+              <ListWithLabel label="Type:">
+                <CustomButtonLink label={type} clickable={false} />
+              </ListWithLabel>
+            </div>
+          </div>
 
           <CastProfiles cast={cast} />
           <RelatedMovies movieId={movieId} />

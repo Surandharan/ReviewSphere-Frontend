@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import { AiOutlineCloudUpload } from "react-icons/ai";
+import {
+  AiOutlineCloseCircle,
+  AiOutlineCloudUpload,
+  AiOutlineIssuesClose,
+} from "react-icons/ai";
 import { uploadMovie, uploadTrailer } from "../../api/movie";
 import { useNotification } from "../../hooks";
 import ModalContainer from "../models/ModalContainer";
@@ -82,6 +86,7 @@ export default function MovieUpload({ visible, onClose }) {
           visible={!videoSelected}
           onTypeError={handleTypeError}
           handleChange={handleChange}
+          onClose={onClose}
         />
       ) : (
         <MovieForm busy={busy} onSubmit={!busy ? handleSubmit : null} />
@@ -90,21 +95,36 @@ export default function MovieUpload({ visible, onClose }) {
   );
 }
 
-const TrailerSelector = ({ visible, handleChange, onTypeError }) => {
+const TrailerSelector = ({ visible, handleChange, onTypeError, onClose }) => {
   if (!visible) return null;
 
+  const handleClose = () => {
+    onClose(); // Call the onClose function to close the modal
+  };
+
   return (
-    <div className="h-full flex items-center justify-center">
-      <FileUploader
-        handleChange={handleChange}
-        onTypeError={onTypeError}
-        types={["mp4", "avi"]}
-      >
-        <label className="w-48 h-48 border border-dashed dark:border-dark-subtle border-light-subtle rounded-full flex flex-col items-center justify-center dark:text-dark-subtle text-secondary cursor-pointer">
-          <AiOutlineCloudUpload size={80} />
-          <p>Drop your file here!</p>
-        </label>
-      </FileUploader>
+    <div>
+      <button onClick={handleClose} className="text-white cursor-pointer">
+        <AiOutlineCloseCircle size={80} />
+      </button>
+
+      <div className="h-full flex items-center justify-center">
+        <FileUploader
+          handleChange={handleChange}
+          onTypeError={onTypeError}
+          types={["mp4", "avi"]}
+        >
+          <label
+            className="w-48 h-48 border border-dashed dark:border-dark-subtle border-light-subtle rounded-full flex flex-col items-center justify-center dark:text-dark-subtle text-secondary cursor-pointer"
+            style={{
+              marginTop: 100,
+            }}
+          >
+            <AiOutlineCloudUpload size={80} />
+            <p>Drop your file here!</p>
+          </label>
+        </FileUploader>
+      </div>
     </div>
   );
 };

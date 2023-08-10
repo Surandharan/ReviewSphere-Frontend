@@ -18,15 +18,19 @@ export default function AuthProvider({ children }) {
 
   const navigate = useNavigate();
 
-  const handleLogin = async (email, password) => {
+  const handleLogin = async (email, password, to) => {
     setAuthInfo({ ...authInfo, isPending: true });
     const { error, user } = await signInUser({ email, password });
     if (error) {
       updateNotification("error", error);
       return setAuthInfo({ ...authInfo, isPending: false, error });
     }
+    if (to == "") {
+      navigate("/", { replace: true });
+    } else {
+      navigate(to, { replace: true });
+    }
 
-    navigate("/", { replace: true });
     setAuthInfo({
       profile: { ...user },
       isPending: false,

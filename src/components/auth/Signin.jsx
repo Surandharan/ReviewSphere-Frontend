@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { useAuth, useNotification } from "../../hooks";
 import { isValidEmail } from "../../utils/helper";
 import { commonModalClasses } from "../../utils/theme";
@@ -28,6 +28,7 @@ export default function Signin() {
   });
 
   const navigate = useNavigate();
+  const location = useLocation();
   const { updateNotification } = useNotification();
   const { handleLogin, authInfo } = useAuth();
   const { isPending, isLoggedIn } = authInfo;
@@ -42,7 +43,7 @@ export default function Signin() {
     const { ok, error } = validateUserInfo(userInfo);
 
     if (!ok) return updateNotification("error", error);
-    handleLogin(userInfo.email, userInfo.password);
+    handleLogin(userInfo.email, userInfo.password,location.state?location.state.from:"");
   };
 
   // useEffect(() => {
