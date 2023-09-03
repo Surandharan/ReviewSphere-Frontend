@@ -3,6 +3,7 @@ import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { getLatestUploads } from "../../api/movie";
 import { useNotification } from "../../hooks";
+import Loader from "../Loader";
 
 let count = 0;
 let intervalId;
@@ -18,15 +19,18 @@ export default function HeroSlidShow() {
   const [visible, setVisible] = useState(true);
   const slideRef = useRef();
   const clonedSlideRef = useRef();
+  const [loading,setLoading] = useState(false);
 
   const { updateNotification } = useNotification();
 
   const fetchLatestUploads = async (signal) => {
+    setLoading(true);
     const { error, movies } = await getLatestUploads(signal);
     if (error) return updateNotification("error", error);
 
     setSlides([...movies]);
     setCurrentSlide(movies[0]);
+    setLoading(false);
   };
 
   const startSlideShow = () => {
@@ -125,6 +129,11 @@ export default function HeroSlidShow() {
 
   return (
     <div className="w-full flex">
+       {
+        loading?
+        <Loader/>
+        : null
+      }
       {/* Slide show section */}
       <div className="md:w-4/5 w-full aspect-video relative overflow-hidden">
         {/* current slide */}

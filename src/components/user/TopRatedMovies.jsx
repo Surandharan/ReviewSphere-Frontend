@@ -4,8 +4,11 @@ import { getTopRatedMovies } from "../../api/movie";
 import { useNotification } from "../../hooks";
 import GridContainer from "../GridContainer";
 import MovieList from "./MovieList";
+import Loader from "../Loader";
 
 export default function TopRatedMovies() {
+  const [loading,setLoading] = useState(false);
+
   const [movies, setMovies] = useState([]);
   const { updateNotification } = useNotification();
 
